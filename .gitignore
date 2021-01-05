@@ -1,0 +1,4 @@
+# Project exclude paths
+/shop-eureka/target/
+/shop-gateway/target/
+/shop-item/shop-item-service/target/

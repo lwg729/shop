@@ -1,0 +1,18 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: shop-gateway
+
+eureka:
+  client:
+    registry-fetch-interval-seconds: 5  #间隔5秒拉取网关服务信息
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:7001/eureka
+zuul:
+  prefix: /api
+  routes:
+    item-service: /item/**
