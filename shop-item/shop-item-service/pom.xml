@@ -12,6 +12,12 @@
     <artifactId>shop-item-service</artifactId>
 
     <dependencies>
+        <!--引入common公共模块-->
+        <dependency>
+            <groupId>com.lwg.common</groupId>
+            <artifactId>shop-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--导入interface-->
         <dependency>
             <groupId>com.lwg.item</groupId>

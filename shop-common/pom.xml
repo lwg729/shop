@@ -11,6 +11,7 @@
 
     <groupId>com.lwg.common</groupId>
     <artifactId>shop-common</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
 
 </project>
