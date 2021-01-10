@@ -12,6 +12,7 @@
         <module>shop-gateway</module>
         <module>shop-item</module>
         <module>shop-common</module>
+        <module>shop-upload</module>
     </modules>
     <packaging>pom</packaging>
 
