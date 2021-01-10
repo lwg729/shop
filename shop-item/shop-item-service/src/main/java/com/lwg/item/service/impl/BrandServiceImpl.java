@@ -60,4 +60,21 @@ public class BrandServiceImpl implements BrandService {
         // 包装成分页结果集返回
         return new PageResult<>(pageInfo.getTotal(), pageInfo.getList());
     }
+
+    /**
+     * 新增品牌
+     * @param brand
+     * @param cids   商品分类id
+     *  此方法我们不仅要新增品牌,还要操作品牌商品表
+     */
+    @Override
+    public void saveBrand(final Brand brand, List<Long> cids) {
+        //新增品牌属性
+        brandMapper.insertSelective(brand);
+
+        //在品牌商品表中插入信息
+        cids.forEach(cid->{
+            brandMapper.insertCategoryAndBrand(cid,brand.getId());
+        });
+    }
 }
