@@ -42,3 +42,5 @@ eureka:
 
 mybatis:
   type-aliases-package: com.lwg.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
