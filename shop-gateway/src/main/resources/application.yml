@@ -1,6 +1,5 @@
 server:
   port: 9527
-
 spring:
   application:
     name: shop-gateway
