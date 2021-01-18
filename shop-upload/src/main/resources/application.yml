@@ -24,4 +24,4 @@ fdfs:
     height: 60
     width: 60
   tracker-list:  #tracker地址
-    - 39.96.48.41:22122
+    - 192.168.136.128:22122

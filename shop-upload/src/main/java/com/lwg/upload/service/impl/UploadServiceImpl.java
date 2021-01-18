@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -67,7 +66,7 @@ public class UploadServiceImpl implements UploadService {
             StorePath storePath = storageClient.uploadFile(file.getInputStream(), file.getSize(), ext, null);
             //返回url，进行回显
             //return "http://image.lshop.com/" + originalFilename;
-            return "http://image.lshop.com/"+storePath.getFullPath();
+            return "http://image.lware.com/"+storePath.getFullPath();
         }catch (IOException e){
             LOGGER.info("服务器内部错误："+originalFilename);
             e.printStackTrace();
