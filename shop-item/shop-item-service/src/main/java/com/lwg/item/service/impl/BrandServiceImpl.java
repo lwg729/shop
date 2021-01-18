@@ -6,9 +6,10 @@ import com.lwg.common.pojo.PageResult;
 import com.lwg.item.mapper.BrandMapper;
 import com.lwg.item.service.BrandService;
 import com.lwg.pojo.Brand;
-import org.apache.commons.lang.StringUtils;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
@@ -67,6 +68,7 @@ public class BrandServiceImpl implements BrandService {
      * @param cids   商品分类id
      *  此方法我们不仅要新增品牌,还要操作品牌商品表
      */
+    @Transactional
     @Override
     public void saveBrand(final Brand brand, List<Long> cids) {
         //新增品牌属性
@@ -77,4 +79,36 @@ public class BrandServiceImpl implements BrandService {
             brandMapper.insertCategoryAndBrand(cid,brand.getId());
         });
     }
+
+    /**
+     * 品牌修改
+     * @param brand
+     * @param cids
+     */
+    @Override
+    public void updateBrand(Brand brand, List<Long> cids) {
+        //修改品牌
+        brandMapper.updateByPrimaryKeySelective(brand);
+
+        //维护中间表
+        cids.forEach(cid->{
+            brandMapper.updateCategoryBrand(cid,brand.getId());
+        });
+    }
+
+
+    /**
+     * 删除品牌
+     * @param bid
+     */
+    @Override
+    public void deleteBrand(Long bid) {
+        //删除品牌表
+        brandMapper.deleteByPrimaryKey(bid);
+
+        //维护中间表
+        brandMapper.deleteCatrgoryBrandByBid(bid);
+    }
+
+
 }
