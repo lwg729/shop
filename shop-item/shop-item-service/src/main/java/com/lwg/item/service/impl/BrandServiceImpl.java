@@ -70,7 +70,7 @@ public class BrandServiceImpl implements BrandService {
      */
     @Transactional
     @Override
-    public void saveBrand(final Brand brand, List<Long> cids) {
+    public void saveBrand(Brand brand, List<Long> cids) {
         //新增品牌属性
         brandMapper.insertSelective(brand);
 
