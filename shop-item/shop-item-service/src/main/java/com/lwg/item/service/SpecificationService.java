@@ -15,4 +15,16 @@ public interface SpecificationService {
     List<SpecGroup> queryGroupsByCid(Long cid);
 
     List<SpecParam> queryParamsBygid(Long gid);
+
+    void updateGroup(SpecGroup specGroup);
+
+    void insertGroup(SpecGroup specGroup);
+
+    void deleteGroupById(Long id);
+
+    void updateParam(SpecParam specParam);
+
+    void insertParam(SpecParam specParam);
+
+    void deleteParamById(Long id);
 }

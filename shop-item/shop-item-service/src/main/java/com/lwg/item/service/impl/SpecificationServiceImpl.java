@@ -14,6 +14,7 @@ import com.lwg.pojo.SpecGroup;
 import com.lwg.pojo.SpecParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,5 +50,65 @@ public class SpecificationServiceImpl implements SpecificationService {
         SpecParam specParam = new SpecParam();
         specParam.setGroupId(gid);
         return paramMapper.select(specParam);
+    }
+
+    /**
+     * 修改规格
+     * @param specGroup
+     */
+    @Transactional
+    @Override
+    public void updateGroup(SpecGroup specGroup) {
+        groupMapper.updateByPrimaryKeySelective(specGroup);
+    }
+
+    /**
+     * 添加规格
+     * @param specGroup
+     */
+    @Transactional
+    @Override
+    public void insertGroup(SpecGroup specGroup) {
+        groupMapper.insertSelective(specGroup);
+    }
+
+    /**
+     * 删除规格
+     * @param id
+     */
+    @Transactional
+    @Override
+    public void deleteGroupById(Long id) {
+        groupMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 更新参数
+     * @param specParam
+     */
+    @Transactional
+    @Override
+    public void updateParam(SpecParam specParam) {
+        paramMapper.updateByPrimaryKeySelective(specParam);
+    }
+
+    /**
+     * 添加参数
+     * @param specParam
+     */
+    @Transactional
+    @Override
+    public void insertParam(SpecParam specParam) {
+        paramMapper.insertSelective(specParam);
+    }
+
+    /**
+     * 删除参数
+     * @param id
+     */
+    @Transactional
+    @Override
+    public void deleteParamById(Long id) {
+        paramMapper.deleteByPrimaryKey(id);
     }
 }

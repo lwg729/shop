@@ -4,6 +4,7 @@ import com.lwg.item.service.impl.SpecificationServiceImpl;
 import com.lwg.pojo.SpecGroup;
 import com.lwg.pojo.SpecParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,11 @@ public class SpecificationController {
         return ResponseEntity.ok(groups);
     }
 
+    /**
+     * 查找参数
+     * @param gid
+     * @return
+     */
     @GetMapping("params")
     public ResponseEntity<List<SpecParam>> queryParamsBygid(@RequestParam("gid") Long gid) {
         List<SpecParam> params = specificationService.queryParamsBygid(gid);
@@ -46,5 +52,68 @@ public class SpecificationController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(params);
+    }
+
+    /**
+     * 修改商品规格
+     * @param specGroup
+     * @return
+     */
+    @PutMapping("group")
+    public ResponseEntity<Void> updateGroup(@RequestBody SpecGroup specGroup){
+        specificationService.updateGroup(specGroup);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
+    /**
+     * 新增规格
+     * @param specGroup
+     * @return
+     */
+    @PostMapping("group")
+    public ResponseEntity<Void> insertGroup(@RequestBody SpecGroup specGroup){
+        specificationService.insertGroup(specGroup);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 删除规格
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/group/{id}")
+    public ResponseEntity<Void> deleteGroupById(@PathVariable("id") Long id){
+        specificationService.deleteGroupById(id);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 更新参数
+     * @param specParam
+     * @return
+     */
+    @PutMapping("param")
+    public ResponseEntity<Void> updateParam(@RequestBody SpecParam specParam){
+        specificationService.updateParam(specParam);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 添加参数
+     * @param specParam
+     * @return
+     */
+    @PostMapping("param")
+    public ResponseEntity<Void> insertParam(@RequestBody SpecParam specParam){
+        specificationService.insertParam(specParam);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
+    @DeleteMapping("param/{id}")
+    public ResponseEntity<Void> deleteParam(@PathVariable("id") Long id){
+        specificationService.deleteParamById(id);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
