@@ -6,6 +6,7 @@ import com.lwg.pojo.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,5 +26,15 @@ public class CateServiceImpl implements CateService {
         category.setParentId(pid);
         List<Category> categories = categoryMapper.select(category);
         return categories;
+    }
+
+    @Override
+    public List<String> queryNamesByIds(List<Long> ids) {
+        List<Category> categories = categoryMapper.selectByIdList(ids);
+        ArrayList<String> list = new ArrayList<>();
+        for (Category category : categories) {
+            list.add(category.getName());
+        }
+        return list;
     }
 }

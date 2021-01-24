@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface CateService {
     List<Category> queryCategoryByPid(Long pid);
+
+    List<String> queryNamesByIds(List<Long> asList);
 }

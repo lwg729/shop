@@ -1,6 +1,7 @@
 package com.lwg.item.mapper;
 
 import com.lwg.pojo.Category;
+import tk.mybatis.mapper.additional.idlist.SelectByIdListMapper;
 import tk.mybatis.mapper.common.Mapper;
 
 /**
@@ -10,5 +11,5 @@ import tk.mybatis.mapper.common.Mapper;
  * @Date: 2021/1/8 0:35
  */
 
-public interface CategoryMapper extends Mapper<Category> {
+public interface CategoryMapper extends Mapper<Category>, SelectByIdListMapper<Category,Long> {
 }
