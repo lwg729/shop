@@ -14,7 +14,7 @@ import java.util.List;
 
 
 /**
- * 功能描述：
+ * 功能描述：品牌操作
  *
  * @Author: lwg
  * @Date: 2021/1/9 22:52
@@ -68,6 +68,7 @@ public class BrandController {
 
     /**
      * 更新品牌
+     *
      * @param brand
      * @param cids
      * @return
@@ -81,6 +82,7 @@ public class BrandController {
 
     /**
      * 删除品牌
+     *
      * @param bid
      * @return
      */
@@ -90,4 +92,18 @@ public class BrandController {
         return ResponseEntity.ok(null);
     }
 
+    /**
+     * 根据cid(商品id)查询品牌
+     *
+     * @param cid
+     * @return
+     */
+    @GetMapping("cid/{cid}")
+    public ResponseEntity<List<Brand>> queryBrandsByCid(@PathVariable("cid") Long cid) {
+        List<Brand> brands = brandService.queryBrandsByCid(cid);
+        if (CollectionUtils.isEmpty(brands)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(brands);
+    }
 }

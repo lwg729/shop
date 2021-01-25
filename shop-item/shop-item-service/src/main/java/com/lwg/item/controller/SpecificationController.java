@@ -42,13 +42,18 @@ public class SpecificationController {
 
     /**
      * 查找参数
+     *
      * @param gid
      * @return
      */
     @GetMapping("params")
-    public ResponseEntity<List<SpecParam>> queryParamsBygid(@RequestParam("gid") Long gid) {
-        List<SpecParam> params = specificationService.queryParamsBygid(gid);
-        if(CollectionUtils.isEmpty(params)){
+    public ResponseEntity<List<SpecParam>> queryParams(
+            @RequestParam(value = "gid", required = false) Long gid,
+            @RequestParam(value = "cid", required = false) Long cid,
+            @RequestParam(value = "generic",required = false) Boolean generic,
+            @RequestParam(value = "searching",required = false) Boolean searching) {
+        List<SpecParam> params = specificationService.queryParams(gid, cid, generic, searching);
+        if (CollectionUtils.isEmpty(params)) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(params);
@@ -56,11 +61,12 @@ public class SpecificationController {
 
     /**
      * 修改商品规格
+     *
      * @param specGroup
      * @return
      */
     @PutMapping("group")
-    public ResponseEntity<Void> updateGroup(@RequestBody SpecGroup specGroup){
+    public ResponseEntity<Void> updateGroup(@RequestBody SpecGroup specGroup) {
         specificationService.updateGroup(specGroup);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -68,51 +74,55 @@ public class SpecificationController {
 
     /**
      * 新增规格
+     *
      * @param specGroup
      * @return
      */
     @PostMapping("group")
-    public ResponseEntity<Void> insertGroup(@RequestBody SpecGroup specGroup){
+    public ResponseEntity<Void> insertGroup(@RequestBody SpecGroup specGroup) {
         specificationService.insertGroup(specGroup);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * 删除规格
+     *
      * @param id
      * @return
      */
     @DeleteMapping("/group/{id}")
-    public ResponseEntity<Void> deleteGroupById(@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteGroupById(@PathVariable("id") Long id) {
         specificationService.deleteGroupById(id);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * 更新参数
+     *
      * @param specParam
      * @return
      */
     @PutMapping("param")
-    public ResponseEntity<Void> updateParam(@RequestBody SpecParam specParam){
+    public ResponseEntity<Void> updateParam(@RequestBody SpecParam specParam) {
         specificationService.updateParam(specParam);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * 添加参数
+     *
      * @param specParam
      * @return
      */
     @PostMapping("param")
-    public ResponseEntity<Void> insertParam(@RequestBody SpecParam specParam){
+    public ResponseEntity<Void> insertParam(@RequestBody SpecParam specParam) {
         specificationService.insertParam(specParam);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     @DeleteMapping("param/{id}")
-    public ResponseEntity<Void> deleteParam(@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteParam(@PathVariable("id") Long id) {
         specificationService.deleteParamById(id);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

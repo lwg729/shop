@@ -46,9 +46,12 @@ public class SpecificationServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    public List<SpecParam> queryParamsBygid(Long gid) {
+    public List<SpecParam> queryParams(Long gid, Long cid, Boolean generic, Boolean searching) {
         SpecParam specParam = new SpecParam();
         specParam.setGroupId(gid);
+        specParam.setCid(cid);
+        specParam.setGeneric(generic);
+        specParam.setSearching(searching);
         return paramMapper.select(specParam);
     }
 
@@ -111,4 +114,5 @@ public class SpecificationServiceImpl implements SpecificationService {
     public void deleteParamById(Long id) {
         paramMapper.deleteByPrimaryKey(id);
     }
+
 }

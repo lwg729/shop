@@ -29,6 +29,5 @@ public class Spu {
     @JsonIgnore
     private Boolean valid;// 是否有效，逻辑删除用
     private Date createTime;// 创建时间
-    @JsonIgnore
     private Date lastUpdateTime;// 最后修改时间
 }

@@ -14,8 +14,6 @@ import java.util.List;
 public interface SpecificationService {
     List<SpecGroup> queryGroupsByCid(Long cid);
 
-    List<SpecParam> queryParamsBygid(Long gid);
-
     void updateGroup(SpecGroup specGroup);
 
     void insertGroup(SpecGroup specGroup);
@@ -27,4 +25,6 @@ public interface SpecificationService {
     void insertParam(SpecParam specParam);
 
     void deleteParamById(Long id);
+
+    List<SpecParam> queryParams(Long gid, Long cid, Boolean generic, Boolean searching);
 }

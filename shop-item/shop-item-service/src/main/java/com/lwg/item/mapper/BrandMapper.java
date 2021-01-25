@@ -1,11 +1,10 @@
 package com.lwg.item.mapper;
 
 import com.lwg.pojo.Brand;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import tk.mybatis.mapper.common.Mapper;
+
+import java.util.List;
 
 /**
  * 功能描述：
@@ -23,5 +22,8 @@ public interface BrandMapper extends Mapper<Brand> {
 
     @Delete("delete from tb_category_brand where brand_id =#{bid}")
     void deleteCatrgoryBrandByBid(@Param("bid") Long bid);
+
+    @Select("SELECT b.* from tb_brand b INNER JOIN tb_category_brand cb on b.id=cb.brand_id where cb.category_id=#{cid}")
+    List<Brand> queryBrandsByCid(@Param("cid") Long cid);
 }
 

@@ -2,13 +2,16 @@ package com.lwg.item.controller;
 
 import com.lwg.common.pojo.PageResult;
 import com.lwg.item.service.impl.GoodsServiceImpl;
+import com.lwg.pojo.Sku;
 import com.lwg.pojo.SpuBo;
+import com.lwg.pojo.SpuDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 功能描述：
@@ -44,8 +47,40 @@ public class GoodsController {
         }
 
         return ResponseEntity.ok(pageResult);
-
     }
 
+    /**
+     * 新增商品
+     * @param spuBo
+     * @return
+     */
+    @PostMapping("goods")
+    public ResponseEntity<Void> saveGoods(@RequestBody SpuBo spuBo){
+        goodsService.saveGoods(spuBo);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 根据spu_id查询spu_detail
+     * @param id
+     * @return
+     */
+    @GetMapping("spu/detail/{id}")
+    public ResponseEntity<SpuDetail> querySpuDetailBySpuId(@PathVariable("id") Long id){
+        SpuDetail spuDetail = goodsService.querySpuDetailBySpuId(id);
+        if (spuDetail==null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(spuDetail);
+    }
+
+    @GetMapping("sku/list")
+    public ResponseEntity<List<Sku>> querySkusBySpuId(@RequestParam("id") Long id){
+        List<Sku> skus = goodsService.querySkusBySpuId(id);
+        if (CollectionUtils.isEmpty(skus)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(skus);
+    }
 
 }
