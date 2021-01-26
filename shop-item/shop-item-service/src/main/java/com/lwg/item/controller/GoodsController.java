@@ -8,19 +8,19 @@ import com.lwg.pojo.SpuDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**
- * 功能描述：
+ * 功能描述：商品管理
  *
  * @Author: lwg
  * @Date: 2021/1/24 21:20
  */
 
-@RestController
+@Controller
 public class GoodsController {
 
     @Autowired
@@ -61,26 +61,38 @@ public class GoodsController {
     }
 
     /**
-     * 根据spu_id查询spu_detail
-     * @param id
+     * 修改商品
+     * @param spuBo
      * @return
      */
-    @GetMapping("spu/detail/{id}")
-    public ResponseEntity<SpuDetail> querySpuDetailBySpuId(@PathVariable("id") Long id){
-        SpuDetail spuDetail = goodsService.querySpuDetailBySpuId(id);
-        if (spuDetail==null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PutMapping("goods")
+    public ResponseEntity<Void> updateGoods(@RequestBody SpuBo spuBo){
+        goodsService.updateGoods(spuBo);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 根据spu_id查询spu_detail
+     * @param spuId
+     * @return
+     */
+    @GetMapping("spu/detail/{spuId}")
+    public ResponseEntity<SpuDetail> querySpuDetailBySpuId(@PathVariable("spuId")Long spuId){
+        SpuDetail spuDetail = this.goodsService.querySpuDetailBySpuId(spuId);
+        if (spuDetail == null) {
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(spuDetail);
     }
 
     @GetMapping("sku/list")
-    public ResponseEntity<List<Sku>> querySkusBySpuId(@RequestParam("id") Long id){
-        List<Sku> skus = goodsService.querySkusBySpuId(id);
-        if (CollectionUtils.isEmpty(skus)){
+    public ResponseEntity<List<Sku>> querySkuBySpuId(@RequestParam("id") Long id) {
+        List<Sku> skus = this.goodsService.querySkuBySpuId(id);
+        if (CollectionUtils.isEmpty(skus)) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(skus);
     }
+
 
 }

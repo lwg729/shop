@@ -11,11 +11,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 功能描述：
@@ -125,6 +128,10 @@ public class GoodsServiceImpl implements GoodsService {
 
         ArrayList<Stock> stockList = new ArrayList<>();
         //新增sku
+        saveSkuAndStock(spuBo, stockList);
+    }
+
+    private void saveSkuAndStock(SpuBo spuBo, ArrayList<Stock> stockList) {
         spuBo.getSkus().forEach(sku -> {
             //填充
             sku.setSpuId(spuBo.getId());
@@ -141,36 +148,68 @@ public class GoodsServiceImpl implements GoodsService {
         stockMapper.insertList(stockList);
     }
 
-
     /**
-     * 根据spu_id 查询spu_detail
-     * @param id
-     * @return
+     * 修改商品
+     * @param spuBo
      */
+    @Transactional
     @Override
-    public SpuDetail querySpuDetailBySpuId(Long id) {
-        SpuDetail spuDetail = spuDetailMapper.selectByPrimaryKey(id);
-        return spuDetail;
+    public void updateGoods(SpuBo spuBo) {
+        //根据spuId查询要删除的sku
+        Sku sku = new Sku();
+        sku.setSpuId(spuBo.getId());
+        List<Sku> skus = skuMapper.select(sku);
+        skus.forEach(sku1->{
+            //删除库存 根据sku的id
+            stockMapper.deleteByPrimaryKey(sku1.getId());
+        });
+
+        //删除sku
+        skuMapper.delete(sku);
+
+        //新增库存stock和sku
+        ArrayList<Stock> stockList = new ArrayList<>();
+        saveSkuAndStock(spuBo, stockList);
+
+        //更新spu和spu_detail
+        spuBo.setCreateTime(null);
+        spuBo.setLastUpdateTime(new Date());
+        /*spuBo.setValid(null);
+        spuBo.setSaleable(null);*/
+        spuMapper.updateByPrimaryKey(spuBo);
+
+        spuDetailMapper.updateByPrimaryKeySelective(spuBo.getSpuDetail());
     }
+
+
     /**
      * 根据spuId查询sku
      *
-     * @param id
+     * @param spuId
      * @return
      */
-    @Override
-    public List<Sku> querySkusBySpuId(Long id) {
-        Sku sku = new Sku();
-        sku.setSpuId(id);
-        List<Sku> skus = skuMapper.select(sku);
-        //查询库存
+    public List<Sku> querySkuBySpuId(Long spuId) {
+        // 查询sku
+        Sku record = new Sku();
+        record.setSpuId(spuId);
+        List<Sku> skus = this.skuMapper.select(record);
         skus.forEach(s -> {
-            Stock stock = stockMapper.selectByPrimaryKey(s.getId());
+            Stock stock = this.stockMapper.selectByPrimaryKey(s.getId());
             s.setStock(stock.getStock());
         });
         return skus;
     }
 
+
+
+    /**
+     * 根据spu_id 查询spu_detail
+     * @param spuId
+     * @return
+     */
+    public SpuDetail querySpuDetailBySpuId(Long spuId) {
+        return this.spuDetailMapper.selectByPrimaryKey(spuId);
+    }
 
 
 }

@@ -7,6 +7,7 @@ import com.lwg.pojo.SpuDetail;
 
 import java.util.List;
 
+
 /**
  * 功能描述：
  *
@@ -18,7 +19,9 @@ public interface GoodsService {
 
     void saveGoods(SpuBo spuBo);
 
-    List<Sku> querySkusBySpuId(Long id);
+    SpuDetail querySpuDetailBySpuId(Long spuId);
 
-    SpuDetail querySpuDetailBySpuId(Long id);
+    List<Sku> querySkuBySpuId(Long spuId);
+
+    void updateGoods(SpuBo spuBo);
 }
