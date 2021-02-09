@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: search-service
+  main:
+    allow-bean-definition-overriding: true
 
   data:
     elasticsearch:

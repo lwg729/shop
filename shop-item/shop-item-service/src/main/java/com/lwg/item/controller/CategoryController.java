@@ -45,4 +45,13 @@ public class CategoryController {
         }
         return ResponseEntity.ok(categories);
     }
+
+    @GetMapping("names")
+    public ResponseEntity<List<String>> queryNamesByIds(@RequestParam("ids") List<Long> ids){
+        List<String> names = cateService.queryNamesByIds(ids);
+        if (CollectionUtils.isEmpty(names)){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(names);
+    }
 }

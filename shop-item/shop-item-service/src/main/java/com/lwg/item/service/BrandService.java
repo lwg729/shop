@@ -21,4 +21,6 @@ public interface BrandService {
     void deleteBrand(Long bid);
 
     List<Brand> queryBrandsByCid(Long cid);
+
+    Brand queryBrandById(Long id);
 }
