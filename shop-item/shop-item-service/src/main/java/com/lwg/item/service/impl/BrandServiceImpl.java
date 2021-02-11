@@ -6,7 +6,7 @@ import com.lwg.common.pojo.PageResult;
 import com.lwg.item.mapper.BrandMapper;
 import com.lwg.item.service.BrandService;
 import com.lwg.pojo.Brand;
-import io.micrometer.core.instrument.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

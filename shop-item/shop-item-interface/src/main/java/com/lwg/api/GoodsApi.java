@@ -18,7 +18,7 @@ import java.util.List;
  * @Author: lwg
  * @Date: 2021/2/9 21:34
  */
-@RequestMapping("goods")
+/*@RequestMapping("goods")*/
 public interface GoodsApi {
 
     /**
@@ -50,5 +50,5 @@ public interface GoodsApi {
      * @return
      */
     @GetMapping("sku/list")
-    public ResponseEntity<List<Sku>> querySkuBySpuId(@RequestParam("id") Long id);
+    public List<Sku> querySkuBySpuId(@RequestParam("id") Long id);
 }

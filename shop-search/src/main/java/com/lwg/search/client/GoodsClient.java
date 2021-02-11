@@ -1,5 +1,6 @@
 package com.lwg.search.client;
 
+import com.lwg.api.GoodsApi;
 import org.springframework.cloud.openfeign.FeignClient;
 
 /**
@@ -10,6 +11,6 @@ import org.springframework.cloud.openfeign.FeignClient;
  */
 
 @FeignClient(value = "item-service")
-public interface GoodsClient {
+public interface GoodsClient extends GoodsApi {
 
 }

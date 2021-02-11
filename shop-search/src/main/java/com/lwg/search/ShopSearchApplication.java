@@ -13,8 +13,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableFeignClients
+@EnableDiscoveryClient
 public class ShopSearchApplication {
     public static void main(String[] args) {
         SpringApplication.run(ShopSearchApplication.class,args);
