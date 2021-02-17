@@ -16,28 +16,23 @@ import org.springframework.web.filter.CorsFilter;
 public class CorsConfig {
 
     @Bean
-    public CorsFilter corsFilter() {
+    public CorsFilter corsFilter(){
 
-        //配置cors的配置信息
+        // 初始化cors配置对象
         CorsConfiguration configuration = new CorsConfiguration();
+        // 允许跨域的域名，如果要携带cookie，不能写*。*：代表所有域名都可以跨域访问
+        configuration.addAllowedOrigin("http://manage.lware.com");
+        configuration.addAllowedOrigin("http://www.lware.com");
+        configuration.setAllowCredentials(true); // 允许携带cookie
+        configuration.addAllowedMethod("*"); // 代表所有的请求方法：GET POST PUT Delete。。。。
+        configuration.addAllowedHeader("*"); // 允许携带任何头信息
 
-        //添加允许跨域的请求,客户端向服务端请求 不要用* 否则cookie无法使用
-        configuration.addAllowedOrigin("http://mannge.lware.com");
+        // 初始化cors配置源对象
+        UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();
+        configurationSource.registerCorsConfiguration("/**", configuration);
 
-        //是否发送cookie信息
-        configuration.setAllowCredentials(true);
-
-        //允许的请求方式
-        configuration.addAllowedMethod("*");
-
-        //允许的请求头信息
-        configuration.addAllowedHeader("*");
-
-        //添加映射路径路径资源 ,拦截请求
-        UrlBasedCorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        corsConfigurationSource.registerCorsConfiguration("/**", configuration);
-
-        return new CorsFilter(corsConfigurationSource);
+        // 返回corsFilter实例，参数：cors配置源对象
+        return new CorsFilter(configurationSource);
     }
 
 }
