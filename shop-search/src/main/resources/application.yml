@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: search-service
+  jackson:
+    default-property-inclusion: non_null  # 配置json处理时忽略空值
   data:
     elasticsearch:
       cluster-name: elasticsearch
