@@ -12,16 +12,25 @@ import com.lwg.search.client.GoodsClient;
 import com.lwg.search.client.SpecificationClient;
 import com.lwg.search.pojo.Goods;
 import com.lwg.search.pojo.SearchRequest;
+import com.lwg.search.pojo.SearchResult;
 import com.lwg.search.reponsitory.GoodsRepository;
 import com.lwg.search.service.SearchService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +40,7 @@ import tk.mybatis.mapper.util.StringUtil;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 功能描述：导入数据-将查询得到的spu转化为Goods存入elasticSearch
@@ -38,6 +48,7 @@ import java.util.*;
  * @Author: lwg
  * @Date: 2021/2/10 22:40
  */
+@Slf4j
 @Service
 public class SearchServiceImpl implements SearchService {
 
@@ -55,6 +66,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Autowired
     private SpecificationClient specificationClient;
+
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -96,10 +108,12 @@ public class SearchServiceImpl implements SearchService {
 
         // 获取通用的规格参数
         Map<Long, Object> genericSpecMap = MAPPER.readValue(spuDetail.getGenericSpec(),
-                new TypeReference<Map<Long, Object>>() {});
+                new TypeReference<Map<Long, Object>>() {
+                });
         // 获取特殊的规格参数
         Map<Long, List<Object>> specialSpecMap = MAPPER.readValue(spuDetail.getSpecialSpec(),
-                new TypeReference<Map<Long, List<Object>>>() {});
+                new TypeReference<Map<Long, List<Object>>>() {
+                });
 
         // 定义map接收{规格参数名，规格参数值}
         Map<String, Object> paramMap = new HashMap<>();
@@ -109,7 +123,7 @@ public class SearchServiceImpl implements SearchService {
                 // 获取通用规格参数值
                 String value = genericSpecMap.get(param.getId()).toString();
                 // 判断是否是数值类型
-                if (param.getNumeric()){
+                if (param.getNumeric()) {
                     // 如果是数值的话，判断该数值落在那个区间
                     value = chooseSegment(value, param);
                 }
@@ -141,32 +155,86 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public PageResult<Goods> search(SearchRequest request) {
         String key = request.getKey();
-        //判断是否有搜索条件,如果没有,直接返回Null,不允许搜索全部商品
-        if (StringUtils.isBlank(key)){
+        //1. 判断是否有搜索条件,如果没有,直接返回Null,不允许搜索全部商品
+        if (StringUtils.isBlank(key)) {
             return null;
         }
         //构建查询条件
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
 
-        //对key进行全文检索查询
-        queryBuilder.withQuery(QueryBuilders.matchQuery("all",key).operator(Operator.AND));
+        //2. 对key进行全文检索查询
+        queryBuilder.withQuery(QueryBuilders.matchQuery("all", key).operator(Operator.AND));
 
         //通过sourceFilter设置返回的结果字段,我们只需要id，skus subtitle   过滤字段
-        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id","skus","subTitle"},null));
+        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id", "skus", "subTitle"}, null));
 
-        //分页
+        //3. 分页
         //准备分页参数
-        Integer page = request.getPage();
-        Integer size = request.getSize();
-        queryBuilder.withPageable(PageRequest.of(page-1,size));
+        Integer page = request.getPage();  //默认页
+        Integer size = request.getSize();  //每页大小
+        queryBuilder.withPageable(PageRequest.of(page - 1, size));
 
-        //查询获得结果
-        Page<Goods> pageInfo = goodsRepository.search(queryBuilder.build());
+        //4. 排序
+        String sortBy = request.getSortBy();
+        Boolean descending = request.getDescending();
+        if (StringUtils.isNotBlank(sortBy)){
+            //如果不为空,则进行排序
+            queryBuilder.withSort(SortBuilders.fieldSort(sortBy).order(descending? SortOrder.DESC:SortOrder.ASC));
+        }
 
+        //5. 聚合商品分类,品牌
+        String categoryAggName = "categories";
+        String brandAggName = "brands";
+        queryBuilder.addAggregation(AggregationBuilders.terms(categoryAggName).field("cid3"));
+        queryBuilder.addAggregation(AggregationBuilders.terms(brandAggName).field("brandId"));
+        //5.1 执行搜索,获取搜索的结果集
+        AggregatedPage<Goods> goodsPage = (AggregatedPage<Goods>)this.goodsRepository.search(queryBuilder.build());
+        //5.2 解析聚合结果
+        List<Map<String, Object>> categories = getCategoryAggResult(goodsPage.getAggregation(categoryAggName));
+        List<Brand> brands = getBrandAggResult(goodsPage.getAggregation(brandAggName));
 
-        //封装结果并返回
-        return new PageResult<>(pageInfo.getTotalElements(),
-                pageInfo.getTotalPages(),pageInfo.getContent());
+        //3. 封装结果并返回
+        //总条数
+        Long total = goodsPage.getTotalElements();
+        //总页数
+        int totalPage = (total.intValue() + size - 1) / size;
+        return new SearchResult(total,totalPage,goodsPage.getContent(),categories,brands);
+    }
+
+    private List<Brand> getBrandAggResult(Aggregation aggregation) {
+        //1. 处理聚合结果集
+        LongTerms terms = (LongTerms) aggregation;
+        //获取所有的品牌id桶
+        List<LongTerms.Bucket> buckets = terms.getBuckets();
+        //解析聚合结果中所有的桶,把桶的集合转化成id的集合
+        List<Long> brandIds = terms.getBuckets().stream().map(bucket ->
+                bucket.getKeyAsNumber().longValue()).collect(Collectors.toList());
+        //根据ids查询品牌
+        return brandIds.stream().map(id->brandClient.queryBrandById(id)).collect(Collectors.toList());
+
+    }
+
+    private List<Map<String, Object>> getCategoryAggResult(Aggregation aggregation) {
+        //处理聚合结果集
+        LongTerms terms = (LongTerms) aggregation;
+        //获取所有分支的id桶
+        List<LongTerms.Bucket> buckets = terms.getBuckets();
+
+        //定义一个品牌集合,搜集所有的品牌形象
+        List<Map<String, Object>> categories = new ArrayList<>();
+        List<Long> cids = new ArrayList<>();
+        //解析所有的id桶,查询品牌
+        buckets.forEach(bucket->{
+            cids.add(bucket.getKeyAsNumber().longValue());
+        });
+        List<String> names = categoryClient.queryNamesByIds(cids);
+        for (int i = 0; i < cids.size(); i++) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", cids.get(i));
+            map.put("name", names.get(i));
+            categories.add(map);
+        }
+        return categories;
     }
 
     private String chooseSegment(String value, SpecParam p) {
