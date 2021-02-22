@@ -23,7 +23,7 @@ public class CorsConfig {
 
         //添加允许跨域的请求,客户端向服务端请求 不要用* 否则cookie无法使用
         configuration.addAllowedOrigin("http://mannge.lware.com");
-
+        configuration.addAllowedOrigin("http://api.lware.com");
         //是否发送cookie信息
         configuration.setAllowCredentials(true);
 
