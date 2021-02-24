@@ -17,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
@@ -36,6 +33,7 @@ import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -167,20 +165,19 @@ public class SearchServiceImpl implements SearchService {
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
 
         //添加查询条件
-        MatchQueryBuilder basicQuery = QueryBuilders.matchQuery("all", request.getKey()).operator(Operator.AND);
+        /* MatchQueryBuilder basicQuery = QueryBuilders.matchQuery("all", request.getKey()).operator(Operator.AND);*/
+        BoolQueryBuilder basicQuery = buildBoolQueryBuilder(request);
         queryBuilder.withQuery(basicQuery);
 
-        //2. 对key进行全文检索查询
-        queryBuilder.withQuery(QueryBuilders.matchQuery("all", key).operator(Operator.AND));
-
-        //通过sourceFilter设置返回的结果字段,我们只需要id，skus subtitle   过滤字段
-        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id", "skus", "subTitle"}, null));
-
-        //3. 分页
+        //2. 分页
         //准备分页参数
         Integer page = request.getPage();  //默认页
         Integer size = request.getSize();  //每页大小
         queryBuilder.withPageable(PageRequest.of(page - 1, size));
+
+
+        //通过sourceFilter设置返回的结果字段,我们只需要id，skus subtitle   过滤字段
+        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id", "skus", "subTitle"}, null));
 
         //4. 排序
         String sortBy = request.getSortBy();
@@ -197,10 +194,9 @@ public class SearchServiceImpl implements SearchService {
         queryBuilder.addAggregation(AggregationBuilders.terms(brandAggName).field("brandId"));
 
         //5.1 执行搜索,获取搜索的结果集
-        AggregatedPage<Goods> goodsPage = (AggregatedPage<Goods>)
-                this.goodsRepository.search(queryBuilder.build());
+        AggregatedPage<Goods> goodsPage = (AggregatedPage<Goods>) this.goodsRepository.search(queryBuilder.build());
 
-        //5.2 解析聚合结果
+        //5.2 获取局和结果并解析聚合结果
         List<Map<String, Object>> categories =
                 getCategoryAggResult(goodsPage.getAggregation(categoryAggName));
 
@@ -213,74 +209,104 @@ public class SearchServiceImpl implements SearchService {
         int totalPage = (total.intValue() + size - 1) / size;
 
         //7. 判断分类聚合的结果集大小,等于1则聚合 等于一说明已选择该分类
-        List<Map<String, Object>> specs=null;
-        if (categories.size()==1){
-            specs=getParamAggResult((Long) categories.get(0).get("id"),basicQuery);
+        List<Map<String, Object>> specs = null;
+        if (!CollectionUtils.isEmpty(categories) && categories.size() == 1) {
+            specs = getParamAggResult((Long) categories.get(0).get("id"), basicQuery);
         }
 
 
-        return new SearchResult(total, totalPage, goodsPage.getContent(), categories, brands,specs);
+        return new SearchResult(total, totalPage, goodsPage.getContent(), categories, brands, specs);
     }
 
     /**
-     * 聚合出规格参数过滤条件
+     * 构建布尔查询
+     * @param request
+     * @return
+     */
+    private BoolQueryBuilder buildBoolQueryBuilder(SearchRequest request) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        // 给布尔查询添加基本查询条件
+        boolQueryBuilder.must(QueryBuilders.matchQuery("all", request.getKey()).operator(Operator.AND));
+        /// 添加过滤条件
+        // 获取用户选择的过滤信息
+        Map<String, Object> filter = request.getFilter();
+        for (Map.Entry<String, Object> entry : filter.entrySet()) {
+            String key = entry.getKey();
+            if (StringUtils.equals("品牌", key)) {
+                key = "brandId";
+            }else if (StringUtils.equals("分类", key)) {
+                key = "cid3";
+            } else {
+                key = "specs." + key + ".keyword";
+            }
+            boolQueryBuilder.filter(QueryBuilders.termQuery(key, entry.getValue()));
+        }
+        return boolQueryBuilder;
+    }
+
+    /**
+     * 根据查询条件聚合规格参数
+     *
      * @param id
      * @param basicQuery
      * @return
      */
-    private List<Map<String, Object>> getParamAggResult(Long id, MatchQueryBuilder basicQuery) {
-        try {
+    private List<Map<String, Object>> getParamAggResult(Long id, QueryBuilder basicQuery) {
             //创建自定义查询构建器
             NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
             //基于基本的查询条件,聚合规格参数
             queryBuilder.withQuery(basicQuery);
 
             //查询要聚合的规格参数
-            List<SpecParam> params=specificationClient.queryParams(null,id,null,true);
-            List<Map<String, Object>> specs = new ArrayList<>();
-
+            List<SpecParam> params = specificationClient.queryParams(null, id, null, true);
             //对规格参数进行聚合
-            params.forEach(param->{
+            params.forEach(param -> {
                 queryBuilder.addAggregation(AggregationBuilders.terms(param.getName())
-                        .field("specs."+param.getName()+".keyword"));
+                        .field("specs." + param.getName() + ".keyword"));
             });
 
-            //查询
-            Map<String,Aggregation> aggs=template.query(queryBuilder.build(),
-                    SearchResponse::getAggregations).asMap();
+            // 添加结果集过滤
+            queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{}, null));
 
-            //解析聚合结果
-            params.forEach(param->{
-                HashMap<String , Object> spec = new HashMap<>();
-                String key=param.getName();
-                spec.put("k",key);
-                StringTerms terms = (StringTerms) aggs.get(key);
-                spec.put("options",terms.getBuckets().stream().map(StringTerms.Bucket::getKeyAsString));
-                specs.add(spec);
-            });
+            // 执行聚合查询，获取聚合结果集
+            AggregatedPage<Goods> goodsPage = (AggregatedPage<Goods>)this.goodsRepository.search(queryBuilder.build());
+
+            List<Map<String,Object>> specs = new ArrayList<>();
+            // 解析聚合结果集， key-聚合名称（规格参数名） value-聚合对象
+            Map<String, Aggregation> aggregationMap = goodsPage.getAggregations().asMap();
+            for (Map.Entry<String, Aggregation> entry : aggregationMap.entrySet()) {
+                // 初始化一个map {k:规格参宿名 options：聚合的规格参数值}
+                Map<String,Object> map = new HashMap<>();
+                map.put("k", entry.getKey());
+                // 初始化一个options集合，收集桶中的key
+                List<String> options = new ArrayList<>();
+                // 获取聚合
+                StringTerms terms = (StringTerms)entry.getValue();
+                // 获取桶集合
+                terms.getBuckets().forEach(bucket -> {
+                    options.add(bucket.getKeyAsString());
+                });
+                map.put("options", options);
+                specs.add(map);
+            }
             return specs;
-        }catch (
-                Exception e)
-
-        {
-            logger.error("规格聚合出现异常：", e);
-            return null;
-        }
-
 
     }
 
-
+    /**
+     * 解析品牌的聚合结果集
+     * @param aggregation
+     * @return
+     */
     private List<Brand> getBrandAggResult(Aggregation aggregation) {
         //1. 处理聚合结果集
         LongTerms terms = (LongTerms) aggregation;
         //获取所有的品牌id桶
         List<LongTerms.Bucket> buckets = terms.getBuckets();
-        //解析聚合结果中所有的桶,把桶的集合转化成id的集合
-        List<Long> brandIds = terms.getBuckets().stream().map(bucket ->
-                bucket.getKeyAsNumber().longValue()).collect(Collectors.toList());
-        //根据ids查询品牌
-        return brandIds.stream().map(id -> brandClient.queryBrandById(id)).collect(Collectors.toList());
+        // 获取聚合中的桶
+        return terms.getBuckets().stream().map(bucket -> {
+            return this.brandClient.queryBrandById(bucket.getKeyAsNumber().longValue());
+        }).collect(Collectors.toList());
 
     }
 
@@ -288,24 +314,18 @@ public class SearchServiceImpl implements SearchService {
     private List<Map<String, Object>> getCategoryAggResult(Aggregation aggregation) {
         //处理聚合结果集
         LongTerms terms = (LongTerms) aggregation;
-        //获取所有分支的id桶
-        List<LongTerms.Bucket> buckets = terms.getBuckets();
-
-        //定义一个品牌集合,搜集所有的品牌形象
-        List<Map<String, Object>> categories = new ArrayList<>();
-        List<Long> cids = new ArrayList<>();
-        //解析所有的id桶,查询品牌
-        buckets.forEach(bucket -> {
-            cids.add(bucket.getKeyAsNumber().longValue());
-        });
-        List<String> names = categoryClient.queryNamesByIds(cids);
-        for (int i = 0; i < cids.size(); i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", cids.get(i));
-            map.put("name", names.get(i));
-            categories.add(map);
-        }
-        return categories;
+        // 获取桶的集合，转化成List<Map<String, Object>>
+        return terms.getBuckets().stream().map(bucket -> {
+            // 初始化一个map
+            Map<String,Object> map = new HashMap<>();
+            // 获取桶中的分类id（key）
+            Long id = bucket.getKeyAsNumber().longValue();
+            // 根据分类id查询分类名称
+            List<String> names = this.categoryClient.queryNamesByIds(Arrays.asList(id));
+            map.put("id", id);
+            map.put("name", names.get(0));
+            return map;
+        }).collect(Collectors.toList());
     }
 
     private String chooseSegment(String value, SpecParam p) {

@@ -1,5 +1,14 @@
 package com.lwg.search.pojo;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Map;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SearchRequest {
     private String key;// 搜索条件
 
@@ -8,8 +17,12 @@ public class SearchRequest {
     private String sortBy; //排序字段
     private Boolean descending; //是否降序
 
+    private Map<String, Object> filter;  //过滤条件
+
     private static final Integer DEFAULT_SIZE = 20;// 每页大小，不从页面接收，而是固定大小
     private static final Integer DEFAULT_PAGE = 1;// 默认页
+
+
 
     public String getKey() {
         return key;
@@ -50,4 +63,5 @@ public class SearchRequest {
     public Integer getSize() {
         return DEFAULT_SIZE;
     }
+
 }
