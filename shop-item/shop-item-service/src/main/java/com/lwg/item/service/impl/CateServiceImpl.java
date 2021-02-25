@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,5 +37,18 @@ public class CateServiceImpl implements CateService {
             list.add(category.getName());
         }
         return list;
+    }
+
+    /**
+     * 根据cid3查询 cid2,cid1
+     * @param id
+     * @return
+     */
+    @Override
+    public List<Category> queryAllByCid3(Long id) {
+        Category c3 = categoryMapper.selectByPrimaryKey(id);
+        Category c2 = categoryMapper.selectByPrimaryKey(c3.getParentId());
+        Category c1 = categoryMapper.selectByPrimaryKey(c2.getParentId());
+        return Arrays.asList(c1,c2,c3);
     }
 }

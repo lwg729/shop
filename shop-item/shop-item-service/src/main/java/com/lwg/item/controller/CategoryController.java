@@ -54,4 +54,19 @@ public class CategoryController {
         }
         return ResponseEntity.ok(names);
     }
+
+    /**
+     * 根据3级分类id，查询1~3级的分类
+     * @param id
+     * @return
+     */
+    @GetMapping("all/level")
+    public ResponseEntity<List<Category>> queryAllByCids(@RequestParam("id") Long id){
+        List<Category> idList = cateService.queryAllByCid3(id);
+        if (CollectionUtils.isEmpty(idList)){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(idList);
+
+    }
 }

@@ -14,4 +14,6 @@ public interface CateService {
     List<Category> queryCategoryByPid(Long pid);
 
     List<String> queryNamesByIds(List<Long> asList);
+
+    List<Category> queryAllByCid3(Long id);
 }

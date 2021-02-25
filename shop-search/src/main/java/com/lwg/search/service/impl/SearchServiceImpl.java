@@ -166,7 +166,7 @@ public class SearchServiceImpl implements SearchService {
 
         //添加查询条件
         /* MatchQueryBuilder basicQuery = QueryBuilders.matchQuery("all", request.getKey()).operator(Operator.AND);*/
-        BoolQueryBuilder basicQuery = buildBoolQueryBuilder(request);
+        BoolQueryBuilder basicQuery = buildBooleanQueryBuilder(request);
         queryBuilder.withQuery(basicQuery);
 
         //2. 分页
@@ -219,31 +219,38 @@ public class SearchServiceImpl implements SearchService {
     }
 
     /**
-     * 构建布尔查询
+     * 构建bool查询构建器
      * @param request
      * @return
      */
-    private BoolQueryBuilder buildBoolQueryBuilder(SearchRequest request) {
+    private BoolQueryBuilder buildBooleanQueryBuilder(SearchRequest request) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        // 给布尔查询添加基本查询条件
+
+        // 添加基本查询条件
         boolQueryBuilder.must(QueryBuilders.matchQuery("all", request.getKey()).operator(Operator.AND));
-        /// 添加过滤条件
-        // 获取用户选择的过滤信息
-        Map<String, Object> filter = request.getFilter();
-        for (Map.Entry<String, Object> entry : filter.entrySet()) {
+
+        // 添加过滤条件
+        if (CollectionUtils.isEmpty(request.getFilter())){
+            return boolQueryBuilder;
+        }
+        for (Map.Entry<String, Object> entry : request.getFilter().entrySet()) {
+
             String key = entry.getKey();
+            // 如果过滤条件是“品牌”, 过滤的字段名：brandId
             if (StringUtils.equals("品牌", key)) {
                 key = "brandId";
-            }else if (StringUtils.equals("分类", key)) {
+            } else if (StringUtils.equals("分类", key)) {
+                // 如果是“分类”，过滤字段名：cid3
                 key = "cid3";
             } else {
+                // 如果是规格参数名，过滤字段名：specs.key.keyword
                 key = "specs." + key + ".keyword";
             }
             boolQueryBuilder.filter(QueryBuilders.termQuery(key, entry.getValue()));
         }
+
         return boolQueryBuilder;
     }
-
     /**
      * 根据查询条件聚合规格参数
      *
