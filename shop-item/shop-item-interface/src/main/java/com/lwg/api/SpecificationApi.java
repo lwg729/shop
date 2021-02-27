@@ -1,7 +1,9 @@
 package com.lwg.api;
 
+import com.lwg.pojo.SpecGroup;
 import com.lwg.pojo.SpecParam;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,4 +29,11 @@ public interface SpecificationApi {
             @RequestParam(value = "cid", required = false) Long cid,
             @RequestParam(value = "generic",required = false) Boolean generic,
             @RequestParam(value = "searching",required = false) Boolean searching);
+
+    /**
+     * 查询规格参数组,及组内参数
+     * @return
+     */
+    @GetMapping("group/param/{cid}")
+    public List<SpecGroup> queryGroupsWithParam(@PathVariable("cid")Long cid);
 }

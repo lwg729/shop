@@ -101,16 +101,16 @@ public class BrandController {
     @GetMapping("cid/{cid}")
     public ResponseEntity<List<Brand>> queryBrandsByCid(@PathVariable("cid") Long cid) {
         List<Brand> brands = brandService.queryBrandsByCid(cid);
-        if (CollectionUtils.isEmpty(brands)){
+        if (CollectionUtils.isEmpty(brands)) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(brands);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Brand> queryBrandById(@PathVariable("id") Long id){
-        Brand brand=brandService.queryBrandById(id);
-        if (brand==null){
+    public ResponseEntity<Brand> queryBrandById(@PathVariable("id") Long id) {
+        Brand brand = this.brandService.queryBrandById(id);
+        if (brand == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(brand);

@@ -3,6 +3,7 @@ package com.lwg.item.controller;
 import com.lwg.common.pojo.PageResult;
 import com.lwg.item.service.impl.GoodsServiceImpl;
 import com.lwg.pojo.Sku;
+import com.lwg.pojo.Spu;
 import com.lwg.pojo.SpuBo;
 import com.lwg.pojo.SpuDetail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -20,7 +22,8 @@ import java.util.List;
  * @Date: 2021/1/24 21:20
  */
 
-@Controller
+@RestController
+/*@RequestMapping("/goods")*/
 public class GoodsController {
 
     @Autowired
@@ -28,6 +31,7 @@ public class GoodsController {
 
     /**
      * 查询商品列表
+     *
      * @param key
      * @param page
      * @param rows
@@ -42,7 +46,7 @@ public class GoodsController {
             @RequestParam(value = "saleable", required = false) Boolean saleable
     ) {
         PageResult<SpuBo> pageResult = goodsService.querySpuBoByPage(key, saleable, page, rows);
-        if (CollectionUtils.isEmpty(pageResult.getItems())){
+        if (CollectionUtils.isEmpty(pageResult.getItems())) {
             return ResponseEntity.notFound().build();
         }
 
@@ -51,33 +55,36 @@ public class GoodsController {
 
     /**
      * 新增商品
+     *
      * @param spuBo
      * @return
      */
     @PostMapping("goods")
-    public ResponseEntity<Void> saveGoods(@RequestBody SpuBo spuBo){
+    public ResponseEntity<Void> saveGoods(@RequestBody SpuBo spuBo) {
         goodsService.saveGoods(spuBo);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * 修改商品
+     *
      * @param spuBo
      * @return
      */
     @PutMapping("goods")
-    public ResponseEntity<Void> updateGoods(@RequestBody SpuBo spuBo){
+    public ResponseEntity<Void> updateGoods(@RequestBody SpuBo spuBo) {
         goodsService.updateGoods(spuBo);
         return ResponseEntity.noContent().build();
     }
 
     /**
      * 根据spu_id查询spu_detail
+     *
      * @param spuId
      * @return
      */
     @GetMapping("spu/detail/{spuId}")
-    public ResponseEntity<SpuDetail> querySpuDetailBySpuId(@PathVariable("spuId")Long spuId){
+    public ResponseEntity<SpuDetail> querySpuDetailBySpuId(@PathVariable("spuId") Long spuId) {
         SpuDetail spuDetail = this.goodsService.querySpuDetailBySpuId(spuId);
         if (spuDetail == null) {
             return ResponseEntity.notFound().build();
@@ -87,6 +94,7 @@ public class GoodsController {
 
     /**
      * 根据spu的id查询sku
+     *
      * @param id
      * @return
      */
@@ -99,5 +107,19 @@ public class GoodsController {
         return ResponseEntity.ok(skus);
     }
 
+    /**
+     * 根据id查询spu
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("{id}")
+    public ResponseEntity<Spu> querySpuById(@PathVariable("id") Long id) {
+        Spu spu = this.goodsService.querySpuById(id);
+        if (spu == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(spu);
+    }
 
 }

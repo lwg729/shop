@@ -56,6 +56,21 @@ public class SpecificationServiceImpl implements SpecificationService {
     }
 
     /**
+     * 根据商品分类id查询规格参数
+     * @param cid
+     * @return
+     */
+    @Override
+    public List<SpecGroup> queryGroupsWithParam(Long cid) {
+        List<SpecGroup> groups = this.queryGroupsByCid(cid);
+        groups.forEach(group -> {
+            List<SpecParam> params = this.queryParams(group.getId(), null, null, null);
+            group.setParams(params);
+        });
+        return groups;
+    }
+
+    /**
      * 修改规格
      * @param specGroup
      */

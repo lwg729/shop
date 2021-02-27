@@ -2,10 +2,12 @@ package com.lwg.item.service;
 
 import com.lwg.common.pojo.PageResult;
 import com.lwg.pojo.Sku;
+import com.lwg.pojo.Spu;
 import com.lwg.pojo.SpuBo;
 import com.lwg.pojo.SpuDetail;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -24,4 +26,7 @@ public interface GoodsService {
     List<Sku> querySkuBySpuId(Long spuId);
 
     void updateGoods(SpuBo spuBo);
+
+    Spu querySpuById(Long id);
+
 }

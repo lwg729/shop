@@ -183,6 +183,17 @@ public class GoodsServiceImpl implements GoodsService {
 
 
     /**
+     * 根据id查询spu
+     * @param id
+     * @return
+     */
+    @Override
+    public Spu querySpuById(Long id) {
+        return spuMapper.selectByPrimaryKey(id);
+    }
+
+
+    /**
      * 根据spuId查询sku
      *
      * @param spuId
