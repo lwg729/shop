@@ -5,6 +5,12 @@ spring:
     name: goods-web
   thymeleaf:
     cache: false
+
+  rabbitmq:
+    host: 39.96.48.41
+    username: lwg
+    password: 109837
+    virtual-host: /lware
 eureka:
   client:
     service-url:

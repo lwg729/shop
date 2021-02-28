@@ -7,6 +7,9 @@ import com.lwg.item.mapper.*;
 import com.lwg.item.service.GoodsService;
 import com.lwg.pojo.*;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +50,9 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     private SkuMapper skuMapper;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     /**
      * 查询商品列表
@@ -101,6 +107,19 @@ public class GoodsServiceImpl implements GoodsService {
         return new PageResult<>(pageInfo.getTotal(), spuBos);
     }
 
+    /**
+     * 封装发送到mq的方法
+     * @param id
+     * @param type
+     */
+    private void sendMessage(Long id,String type){
+        //发送消息
+        try {
+            amqpTemplate.convertAndSend("item."+type,id);
+        }catch (AmqpException e){
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 新增商品
@@ -127,8 +146,9 @@ public class GoodsServiceImpl implements GoodsService {
 
 
         ArrayList<Stock> stockList = new ArrayList<>();
-        //新增sku
+        //新增sku和库存信息
         saveSkuAndStock(spuBo, stockList);
+        sendMessage(spuBo.getId(),"insert");
     }
 
     private void saveSkuAndStock(SpuBo spuBo, ArrayList<Stock> stockList) {
@@ -179,6 +199,8 @@ public class GoodsServiceImpl implements GoodsService {
         spuMapper.updateByPrimaryKey(spuBo);
 
         spuDetailMapper.updateByPrimaryKeySelective(spuBo.getSpuDetail());
+
+        sendMessage(spuBo.getId(),"update");
     }
 
 

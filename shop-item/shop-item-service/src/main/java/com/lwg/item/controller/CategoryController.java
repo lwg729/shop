@@ -3,6 +3,7 @@ package com.lwg.item.controller;
 import com.lwg.item.service.impl.CateServiceImpl;
 import com.lwg.pojo.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -32,18 +33,25 @@ public class CategoryController {
      * @param pid
      * @return
      */
-    @GetMapping("list")
+    @RequestMapping("list")
     public ResponseEntity<List<Category>> queryCategoryByPid(@RequestParam(value = "pid",defaultValue = "0") Long pid){
-        if (pid==null||pid<0){
-            //相应400  参数不合法
-            return ResponseEntity.badRequest().build();
+        try {
+            if (pid==null||pid<0){
+                //相应400  参数不合法
+                return ResponseEntity.badRequest().build();
+            }
+            List<Category> categories = cateService.queryCategoryByPid(pid);
+            if (CollectionUtils.isEmpty(categories)){
+                //相应404
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(categories);
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        List<Category> categories = cateService.queryCategoryByPid(pid);
-        if (CollectionUtils.isEmpty(categories)){
-            //相应404
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(categories);
+        // 响应500
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
     }
 
     @GetMapping("names")

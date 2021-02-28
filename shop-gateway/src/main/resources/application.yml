@@ -1,5 +1,5 @@
 server:
-  port: 9527
+  port: 10010
 spring:
   application:
     name: shop-gateway
@@ -12,7 +12,7 @@ eureka:
     service-url:
       defaultZone: http://localhost:7001/eureka
 zuul:
-  prefix: /api
+  prefix: /api # 路由路径前缀
   routes:
     item-service: /item/** # 路由到商品的微服务
     search-service: /search/** # 路由到搜索微服务

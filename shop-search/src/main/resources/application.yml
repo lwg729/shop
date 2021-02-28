@@ -11,6 +11,12 @@ spring:
       cluster-nodes: 192.168.136.130:9300
   main:
     allow-bean-definition-overriding: true
+
+  rabbitmq:
+    host: 39.96.48.41
+    username: lwg
+    password: 109837
+    virtual-host: /lware
 eureka:
   client:
     registry-fetch-interval-seconds: 5  #间隔5秒拉取网关服务信息

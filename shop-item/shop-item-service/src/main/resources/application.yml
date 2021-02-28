@@ -29,6 +29,16 @@ spring:
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
 
+  rabbitmq:
+    host: 39.96.48.41
+    username: lwg
+    password: 109837
+    virtual-host: /lware
+    template:
+      exchange: lware.item.exchange
+    #生产者确认机制,确保信息会正确发送,如果发送失败会有错误回执,从而触发重试
+    publisher-confirms: true
+
 eureka:
   client:
     registry-fetch-interval-seconds: 5  #间隔5秒拉取网关服务信息

@@ -361,4 +361,15 @@ public class SearchServiceImpl implements SearchService {
         }
         return result;
     }
+
+    //编写创建和删除索引方法 ,方便rabbitmq调用进行同步
+    public void createIndex(Long id)throws IOException{
+        Spu spu = goodsClient.querySpuById(id);
+        Goods goods = buildGoods(spu);
+        goodsRepository.save(goods);
+    }
+
+    public void deleteIndex(Long id){
+        goodsRepository.deleteById(id);
+    }
 }
