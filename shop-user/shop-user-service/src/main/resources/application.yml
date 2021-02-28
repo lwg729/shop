@@ -1,9 +1,9 @@
 server:
-  port: 8081
+  port: 8085
 
 spring:
   application:
-    name: item-service
+    name: user-service
     #数据库
   datasource:
     url: jdbc:mysql://39.96.48.41:3306/shops?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
@@ -28,16 +28,6 @@ spring:
     maxPoolPreparedStatementPerConnectionSize: 20
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-
-  rabbitmq:
-    host: 39.96.48.41
-    username: lwg
-    password: 109837
-    virtual-host: /lware
-    template:
-      exchange: lware.item.exchange
-    #生产者确认机制,确保信息会正确发送,如果发送失败会有错误回执,从而触发重试
-    publisher-confirms: true
 
 eureka:
   client:

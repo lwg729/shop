@@ -14,9 +14,8 @@
         <module>shop-common</module>
         <module>shop-upload</module>
         <module>shop-search</module>
-        <module>com.lwg.goods</module>
-        <module>com.lwg.goods</module>
         <module>shop-goods-web</module>
+        <module>shop-user</module>
     </modules>
     <packaging>pom</packaging>
 
