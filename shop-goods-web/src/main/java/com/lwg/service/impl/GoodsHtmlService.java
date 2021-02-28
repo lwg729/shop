@@ -48,7 +48,7 @@ public class GoodsHtmlService {
             context.setVariables(spuMap);
 
             // 创建输出流
-            File file = new File("E:\\nginx-1.14.0\\html\\item\\" + spuId + ".html");
+            File file = new File("E:\\nginx-1.14.0\\html\\" + spuId + ".html");
             writer = new PrintWriter(file);
 
             // 执行页面静态化方法
@@ -77,7 +77,7 @@ public class GoodsHtmlService {
     }
 
     public void deleteHtml(Long id) {
-        File file = new File("E:\\nginx-1.14.0\\html\\item\\" + id + ".html");
+        File file = new File("E:\\nginx-1.14.0\\html\\" + id + ".html");
         file.deleteOnExit();
     }
 }
