@@ -1,5 +1,7 @@
 package com.lwg.service;
 
+import com.lwg.pojo.User;
+
 /**
  * 功能描述：
  *
@@ -8,6 +10,11 @@ package com.lwg.service;
  */
 public interface UserService {
     //校验数据是否可用
-    public Boolean checkData(String data, Integer type);
+    public Boolean checkData(String data);
 
+    //注册功能
+    Boolean register(User user);
+
+    //查询 用户
+    User queryUser(String username, String password);
 }
