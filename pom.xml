@@ -17,6 +17,7 @@
         <module>shop-goods-web</module>
         <module>shop-user</module>
         <module>shop-auth</module>
+        <module>shop-cart</module>
     </modules>
     <packaging>pom</packaging>
 
