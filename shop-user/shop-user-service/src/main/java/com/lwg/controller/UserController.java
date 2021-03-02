@@ -36,7 +36,7 @@ public class UserController {
     public ResponseEntity<Boolean> checkData(@PathVariable("data") String data) {
         Boolean bool = userService.checkData(data);
         if (bool == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(bool);
     }

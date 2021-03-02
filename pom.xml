@@ -16,6 +16,7 @@
         <module>shop-search</module>
         <module>shop-goods-web</module>
         <module>shop-user</module>
+        <module>shop-auth</module>
     </modules>
     <packaging>pom</packaging>
 
