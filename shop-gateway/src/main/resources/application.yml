@@ -24,3 +24,16 @@ zuul:
 ribbon:
   connectionTimeout: 1000  #获取连接超时时间
   readTimeout: 100   #通讯超时时间
+
+lware:
+  jwt:
+    pubKeyPath: F:\rsa\rsa.pub # 公钥地址
+    cookieName: LW_TOKEN
+  filter:
+    allowPaths:
+      - /api/auth
+      - /api/search
+      - /api/user/register
+      - /api/user/check
+      - /api/user/code
+      - /api/item
