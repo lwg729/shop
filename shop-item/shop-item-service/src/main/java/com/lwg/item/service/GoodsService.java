@@ -29,4 +29,5 @@ public interface GoodsService {
 
     Spu querySpuById(Long id);
 
+    Sku querySkuById(Long id);
 }

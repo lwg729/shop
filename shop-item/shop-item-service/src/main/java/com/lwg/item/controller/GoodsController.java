@@ -121,4 +121,17 @@ public class GoodsController {
         return ResponseEntity.ok(spu);
     }
 
+    /**
+     * 根据id查询sku
+     * @param id
+     * @return
+     */
+    @GetMapping("sku/{id}")
+    public ResponseEntity<Sku> querySkuById(@PathVariable("id") Long id) {
+        Sku sku = goodsService.querySkuById(id);
+        if (sku==null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(sku);
+    }
 }

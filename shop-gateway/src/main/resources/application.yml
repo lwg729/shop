@@ -18,6 +18,7 @@ zuul:
     search-service: /search/** # 路由到搜索微服务
     user-service: /user/**    #用户微服务
     auth-service: /auth/**    #授权中心微服务
+    cart-service: /cart/**
   add-host-header: true    #携带nginx请求转发过来的域名head头信息
   sensitive-headers:      #配置禁止使用的头信息,这里设置为Null,否则set-cookie无效
 

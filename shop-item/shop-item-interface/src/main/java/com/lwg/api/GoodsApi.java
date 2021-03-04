@@ -5,6 +5,7 @@ import com.lwg.pojo.Sku;
 import com.lwg.pojo.Spu;
 import com.lwg.pojo.SpuBo;
 import com.lwg.pojo.SpuDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,4 +60,12 @@ public interface GoodsApi {
      */
     @GetMapping("{id}")
     public Spu querySpuById(@PathVariable("id") Long id);
+
+    /**
+     * 根据id查询sku
+     * @param id
+     * @return
+     */
+    @GetMapping("sku/{id}")
+    public Sku querySkuById(@PathVariable("id") Long id);
 }

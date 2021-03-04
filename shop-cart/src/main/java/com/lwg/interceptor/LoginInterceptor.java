@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Author: lwg
  * @Date: 2021/3/4 22:44
  */
+@Component
 @EnableConfigurationProperties(JwtProperties.class)
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
@@ -28,8 +29,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     // 因此请求到达`Controller`后可以共享User
     private static final ThreadLocal<UserInfo> THREAD_LOCAL = new ThreadLocal<>();
 
-   @Autowired
-   private JwtProperties jwtProperties;
+    @Autowired
+    private JwtProperties jwtProperties;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -48,7 +49,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             UserInfo userInfo = JwtUtils.getInfoFromToken(token, jwtProperties.getPublicKey());
             THREAD_LOCAL.set(userInfo);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             // 抛出异常，证明未登录,返回401
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return false;
@@ -64,7 +65,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     }
 
     //对外提供静态方法,用来获取登录user的信息  因为ThreadLocal为私有的
-    public static UserInfo getLoginUser(){
+    public static UserInfo getLoginUser() {
         return THREAD_LOCAL.get();
     }
 }

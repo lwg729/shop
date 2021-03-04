@@ -17,6 +17,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 public class ShopCartApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ShopCartApplication.class,args);
+        SpringApplication.run(ShopCartApplication.class, args);
     }
 }

@@ -3,15 +3,21 @@ server:
 
 eureka:
   client:
-    register-with-eureka: false    #表识不向注册中心注册自己
-    fetch-registry: false   #表示自己就是注册中心，职责是维护服务实例，并不需要去检索服务
     service-url:
       defaultZone: http://localhost:7001/eureka/    #设置与eureka server交互的地址查询服务和注册服务都需要依赖这个地址
-  server:
-    enable-self-preservation: false  #关闭自我保护
-    eviction-interval-timer-in-ms: 5000  #每隔5秒钟,进行一次服务列表的刷新
+    registry-fetch-interval-seconds: 10
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
 
 lware:
   jwt:
     pubKeyPath: F:\rsa\rsa.pub # 公钥地址
     cookieName: LW_TOKEN
+spring:
+  application:
+    name: cart-service
+  redis:
+    host: 39.96.48.41
+    port: 6379
+    password: 109837
