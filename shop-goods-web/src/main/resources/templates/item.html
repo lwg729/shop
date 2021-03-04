@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -206,7 +206,7 @@
                             <div class="fl">
                                 <ul class="btn-choose unstyled">
                                     <li>
-                                        <a href="javascript:void(0);" target="_blank" @click="addCart()" class="sui-btn  btn-danger addshopcar">加入购物车</a>
+                                        <a href="javascript:void(0);" target="_self" @click="addCart()" class="sui-btn  btn-danger addshopcar">加入购物车</a>
                                     </li>
                                 </ul>
                             </div>
@@ -650,14 +650,14 @@
             addCart(){
                 // 判断有没有登录
                 ly.verify().then(res=>{
-                    // 登录
+                   /* // 登录
                     ly.http.post("/cart", {skuId: this.sku.id, num: this.num}).then(res=>{
-                        window.location = "http://www.leyou.com/cart.html";
-                    })
+                        window.location = "http://www.lware.com/cart.html";
+                    })*/
                 }).catch(()=>{
                     // 未登录，保存到localstorage
                     // 先去查询购物车信息
-                    let carts = ly.store.get("LY_CART") || [];
+                    let carts = ly.store.get("LW_CART") || [];
                     let cart = carts.find(cart => cart.skuId == this.sku.id);
                     if (cart){
                         // 如果购物车中有该商品记录，更新数量
@@ -673,8 +673,8 @@
                             num: this.num
                         })
                     }
-                    ly.store.set("LY_CART", carts);
-                    window.location = "http://www.leyou.com/cart.html";
+                    ly.store.set("LW_CART", carts);
+                    window.location = "http://www.lware.com/cart.html";
                 })
             },
             incr(){
