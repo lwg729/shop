@@ -2,6 +2,8 @@ package com.lwg.Service;
 
 import com.lwg.pojo.Cart;
 
+import java.util.List;
+
 /**
  * 功能描述：购物车
  *
@@ -12,4 +14,6 @@ public interface CartService {
 
     //添加购物车
     void addCart(Cart cart);
+
+    List<Cart> queryCarts();
 }

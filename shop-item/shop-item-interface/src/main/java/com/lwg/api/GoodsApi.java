@@ -19,7 +19,6 @@ import java.util.List;
  * @Author: lwg
  * @Date: 2021/2/9 21:34
  */
-/*@RequestMapping("goods")*/
 public interface GoodsApi {
 
     /**

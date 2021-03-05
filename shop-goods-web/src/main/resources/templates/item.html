@@ -628,7 +628,7 @@
         computed: {
             sku(){
                 const index = Object.values(this.indexes).join("_");
-                return skus.find(sku => sku.indexes == index);
+                return skus.find(sku => sku.indexes === index);
             },
             images(){
                 return this.sku.images ? this.sku.images.split(",") : "";
@@ -658,7 +658,7 @@
                     // 未登录，保存到localstorage
                     // 先去查询购物车信息
                     let carts = ly.store.get("LW_CART") || [];
-                    let cart = carts.find(cart => cart.skuId == this.sku.id);
+                    let cart = carts.find(cart => cart.skuId === this.sku.id);
                     if (cart){
                         // 如果购物车中有该商品记录，更新数量
                         cart.num += this.num;

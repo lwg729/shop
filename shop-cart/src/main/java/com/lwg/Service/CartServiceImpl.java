@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 功能描述：
@@ -52,6 +56,8 @@ public class CartServiceImpl implements CartService {
         if (bool) {
             //存在,获取购物车数据
             String json = hashOps.get(skuId.toString()).toString();
+
+            //购物车中的数据为json类型的 反序列化为cart对象
             cart = JsonUtils.parse(json, Cart.class);
 
             //修改购物车数量
@@ -69,5 +75,35 @@ public class CartServiceImpl implements CartService {
             cart.setOwnSpec(sku.getOwnSpec());
         }
         hashOps.put(cart.getSkuId().toString(),JsonUtils.serialize(cart));
+    }
+
+    /**
+     * 查询购物车
+     * @return
+     */
+    @Override
+    public List<Cart> queryCarts() {
+
+        //获取登录用户信息
+        UserInfo userInfo = LoginInterceptor.getLoginUser();
+
+        //存入Redis的key
+        String key = KEY_PREFIX + userInfo.getId();
+
+        //判断是否存在该购物车
+        if (!redisTemplate.hasKey(key)){
+            return null;
+        }
+
+        //购物车数据
+        BoundHashOperations<String, Object, Object> hashOps = redisTemplate.boundHashOps(key);
+
+        List<Object> carts = hashOps.values();
+        //判断购物车中是否存在该商品记录
+        if (CollectionUtils.isEmpty(carts)){
+            return null;
+        }
+        //返回购物车数据给前端
+        return carts.stream().map(o->JsonUtils.parse(o.toString(),Cart.class)).collect(Collectors.toList());
     }
 }

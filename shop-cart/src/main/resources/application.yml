@@ -1,6 +1,12 @@
 server:
   port: 8088
-
+spring:
+  application:
+    name: cart-service
+  redis:
+    host: 39.96.48.41
+    port: 6379
+    password: 109837
 eureka:
   client:
     service-url:
@@ -14,10 +20,3 @@ lware:
   jwt:
     pubKeyPath: F:\rsa\rsa.pub # 公钥地址
     cookieName: LW_TOKEN
-spring:
-  application:
-    name: cart-service
-  redis:
-    host: 39.96.48.41
-    port: 6379
-    password: 109837
