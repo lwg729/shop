@@ -106,4 +106,40 @@ public class CartServiceImpl implements CartService {
         //返回购物车数据给前端
         return carts.stream().map(o->JsonUtils.parse(o.toString(),Cart.class)).collect(Collectors.toList());
     }
+
+    /**
+     * 更新购物车
+     * @param cart
+     */
+    @Override
+    public void updateCarts(Cart cart) {
+
+        //获取登录信息
+        UserInfo userInfo = LoginInterceptor.getLoginUser();
+        String key = KEY_PREFIX + userInfo.getId();
+
+        //获取hash操作对象
+        BoundHashOperations<String, Object, Object> hashOps =
+                redisTemplate.boundHashOps(key);
+
+        //获取购物车信息
+        String cartJson = hashOps.get(cart.getSkuId().toString()).toString();
+
+        //发序列化为cart对象
+        Cart cart1 = JsonUtils.parse(cartJson, Cart.class);
+
+        //更新数量
+        cart1.setNum(cart.getNum());
+
+        //写入购物车 序列化cart对象对json对象
+        hashOps.put(cart.getSkuId().toString(),JsonUtils.serialize(cart1));
+    }
+
+    @Override
+    public void deleteCart(String skuId) {
+        UserInfo userInfo = LoginInterceptor.getLoginUser();
+        String key = KEY_PREFIX + userInfo.getId();
+        BoundHashOperations<String, Object, Object> hashOps = redisTemplate.boundHashOps(key);
+        hashOps.delete(skuId);
+    }
 }

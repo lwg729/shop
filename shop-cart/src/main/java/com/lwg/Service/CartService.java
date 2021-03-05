@@ -16,4 +16,8 @@ public interface CartService {
     void addCart(Cart cart);
 
     List<Cart> queryCarts();
+
+    void updateCarts(Cart cart);
+
+    void deleteCart(String skuId);
 }

@@ -21,10 +21,13 @@ zuul:
     cart-service: /cart/**   #购物车微服务
   add-host-header: true    #携带nginx请求转发过来的域名head头信息
   sensitive-headers:      #配置禁止使用的头信息,这里设置为Null,否则set-cookie无效
+  host:
+    connect-timeout-millis: 3000
+    socket-timeout-millis: 3000
 
 ribbon:
-  connectionTimeout: 1000  #获取连接超时时间
-  readTimeout: 100   #通讯超时时间
+  connectionTimeout: 3000  #获取连接超时时间
+  readTimeout: 3000   #通讯超时时间
 
 lware:
   jwt:

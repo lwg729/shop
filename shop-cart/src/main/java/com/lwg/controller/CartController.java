@@ -3,12 +3,11 @@ package com.lwg.controller;
 import com.lwg.Service.CartServiceImpl;
 import com.lwg.pojo.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,4 +48,31 @@ public class CartController {
         }
         return ResponseEntity.ok(carts);
     }
+
+    /**
+     * 更新购物车
+     */
+    @PutMapping
+    public ResponseEntity<Void> updateNum(@RequestBody Cart cart){
+        this.cartService.updateCarts(cart);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 删除购物车
+     * @param skuId
+     * @return
+     */
+    @DeleteMapping("{skuId}")
+    public ResponseEntity<Void> deleteCart(@PathVariable("skuId") String skuId) {
+        this.cartService.deleteCart(skuId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("add")
+    public ResponseEntity<Void> addCartsToUser(@RequestBody Cart cart){
+        cartService.addCart(cart);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }
