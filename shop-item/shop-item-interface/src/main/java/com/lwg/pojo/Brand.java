@@ -1,9 +1,5 @@
 package com.lwg.pojo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,11 +11,6 @@ import javax.persistence.Table;
  * @Author: lwg
  * @Date: 2021/1/9 18:10
  */
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Table(name = "tb_brand")
 public class Brand {

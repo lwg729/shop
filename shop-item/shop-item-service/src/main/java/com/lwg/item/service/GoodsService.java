@@ -7,7 +7,6 @@ import com.lwg.pojo.SpuBo;
 import com.lwg.pojo.SpuDetail;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**

@@ -16,7 +16,6 @@ import com.lwg.search.service.SearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;

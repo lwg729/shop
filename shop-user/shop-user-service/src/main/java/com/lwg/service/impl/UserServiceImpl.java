@@ -4,7 +4,6 @@ import com.lwg.mapper.UserMapper;
 import com.lwg.pojo.User;
 import com.lwg.service.UserService;
 import com.lwg.utils.CodecUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

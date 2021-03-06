@@ -7,21 +7,18 @@ import com.lwg.item.mapper.*;
 import com.lwg.item.service.GoodsService;
 import com.lwg.pojo.*;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 功能描述：

@@ -5,10 +5,8 @@ import com.lwg.pojo.Sku;
 import com.lwg.pojo.Spu;
 import com.lwg.pojo.SpuBo;
 import com.lwg.pojo.SpuDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
