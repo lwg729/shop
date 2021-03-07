@@ -18,6 +18,7 @@
         <module>shop-user</module>
         <module>shop-auth</module>
         <module>shop-cart</module>
+        <module>shop-order</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -111,27 +112,13 @@
     </dependencyManagement>
     <build>
         <plugins>
-
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.3.3.RELEASE</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <fork>true</fork>
-                    <addResources>true</addResources>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <addResources>true</addResources>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
-
 </project>

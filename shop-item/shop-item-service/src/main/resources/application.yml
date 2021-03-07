@@ -48,6 +48,6 @@ eureka:
     lease-expiration-duration-in-seconds: 10 #10秒不发送就过期
 
 mybatis:
-  type-aliases-package: com.lwg.pojo
+  type-aliases-package: com.lwg.item.pojo
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
