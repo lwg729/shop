@@ -16,4 +16,6 @@ public interface CateService {
     List<String> queryNamesByIds(List<Long> asList);
 
     List<Category> queryAllByCid3(Long id);
+
+    List<Category> queryCategoryBid(Long bid);  //修改品牌时回显商品分类
 }

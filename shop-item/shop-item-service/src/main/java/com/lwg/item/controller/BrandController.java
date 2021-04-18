@@ -85,8 +85,8 @@ public class BrandController {
      * @param bid
      * @return
      */
-    @DeleteMapping
-    public ResponseEntity<Void> deleteBrand(@RequestParam("bid") Long bid) {
+    @DeleteMapping("bid/{bid}")
+    public ResponseEntity<Void> deleteBrand(@PathVariable("bid") Long bid) {
         brandService.deleteBrand(bid);
         return ResponseEntity.ok(null);
     }
@@ -106,6 +106,11 @@ public class BrandController {
         return ResponseEntity.ok(brands);
     }
 
+    /**
+     * 品牌编辑回显商品分类
+     * @param id
+     * @return
+     */
     @GetMapping("{id}")
     public ResponseEntity<Brand> queryBrandById(@PathVariable("id") Long id) {
         Brand brand = this.brandService.queryBrandById(id);
@@ -114,4 +119,6 @@ public class BrandController {
         }
         return ResponseEntity.ok(brand);
     }
+
+
 }

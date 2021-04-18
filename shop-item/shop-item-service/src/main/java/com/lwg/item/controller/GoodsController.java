@@ -9,6 +9,7 @@ import com.lwg.pojo.SpuDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ import java.util.List;
  * @Date: 2021/1/24 21:20
  */
 
-@RestController
+@Controller
 public class GoodsController {
 
     @Autowired
@@ -36,12 +37,13 @@ public class GoodsController {
      * @param saleable
      * @return
      */
-    @GetMapping("/spu/page")
+    @GetMapping("spu/page")
     public ResponseEntity<PageResult<SpuBo>> querySpuByPage(
             @RequestParam(value = "key", required = false) String key,
+            @RequestParam(value = "saleable", required = false) Boolean saleable,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
-            @RequestParam(value = "rows", defaultValue = "5") Integer rows,
-            @RequestParam(value = "saleable", required = false) Boolean saleable
+            @RequestParam(value = "rows", defaultValue = "5") Integer rows
+
     ) {
         PageResult<SpuBo> pageResult = goodsService.querySpuBoByPage(key, saleable, page, rows);
         if (CollectionUtils.isEmpty(pageResult.getItems())) {

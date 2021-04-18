@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lwg.common.pojo.PageResult;
 import com.lwg.item.mapper.BrandMapper;
+import com.lwg.item.mapper.CategoryMapper;
 import com.lwg.item.service.BrandService;
 import com.lwg.pojo.Brand;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +27,8 @@ public class BrandServiceImpl implements BrandService {
     @Autowired
     private BrandMapper brandMapper;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
     /**
      * 根据查询条件分页并查询品牌信息
      *

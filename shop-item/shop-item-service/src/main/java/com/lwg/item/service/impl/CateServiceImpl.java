@@ -51,4 +51,9 @@ public class CateServiceImpl implements CateService {
         Category c1 = categoryMapper.selectByPrimaryKey(c2.getParentId());
         return Arrays.asList(c1,c2,c3);
     }
+
+    @Override
+    public List<Category> queryCategoryBid(Long bid) {
+        return categoryMapper.queryCategoryBid(bid);
+    }
 }
